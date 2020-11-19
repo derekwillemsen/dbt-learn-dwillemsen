@@ -1,27 +1,6 @@
 version: 2
 
-sources:
-  - name: jaffle_shop
-    database: raw
-    tables:
-      - name: orders
-      - name: customers
-  - name: stripe
-    database: raw
-    tables:
-      - name: payment
-      
 models:
-  - name: customers
-    description: One record per customer
-    columns:
-      - name: customer_id
-        description: Primary key
-        tests:
-          - unique
-          - not_null
-      - name: first_order_date
-        description: NULL when a customer has not yet placed an order.
 
   - name: stg_customers
     description: This model cleans up customer data
@@ -50,3 +29,20 @@ models:
           - relationships:
               to: ref('stg_customers')
               field: customer_id
+  
+  - name: stg_payments
+    description: This model cleans up payments data
+    columns:
+      - name: payment_id
+        description: Primary key
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: The reference ID to an order
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+
